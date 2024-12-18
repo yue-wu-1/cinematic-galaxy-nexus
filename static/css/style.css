@@ -1,0 +1,24 @@
+/* Button styling for "Go to Top" */
+#go-to-top-btn {
+    position: fixed;
+    bottom: 20px;
+    right: 20px;
+    width: 50px;
+    height: 50px;
+    background-color: #00e1ff;
+    color: black;
+    border: none;
+    border-radius: 50%;
+    font-size: 24px;
+    display: none; /* Initially hidden */
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    z-index: 1000;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    transition: opacity 0.3s;
+}
+
+#go-to-top-btn:hover {
+    background-color: #0078cc; /* Slightly darker shade on hover */
+}
