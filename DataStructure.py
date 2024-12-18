@@ -139,6 +139,7 @@ class GraphBuilder:
         actor_graph (nx.Graph): Graph representing actor relationships.
         movie_graph (nx.Graph): Graph representing movie relationships.
     """
+
     def __init__(self, movies_df, actors_df, actor_id_to_name, data):
         self.movies_df = movies_df
         self.actors_df = actors_df
@@ -184,112 +185,6 @@ class GraphBuilder:
                         self.actor_graph.add_edge(a1, a2, weight=increment, movies={movie_title})
 
         return self.actor_graph
-
-
-    def get_most_influential_actor(self, start_year=None, end_year=None):
-        """
-        Identifies the most influential actor within a specified year range using PageRank.
-
-        Args:
-            start_year (int, optional): The start year for filtering movies.
-            end_year (int, optional): The end year for filtering movies.
-
-        Returns:
-            tuple: (actor_id, actor_name, PageRank score) of the most influential actor.
-        """
-        if start_year is not None and end_year is not None:
-            yearly_movies = self.movies_df[
-                (self.movies_df['year'] >= start_year) & (self.movies_df['year'] <= end_year)
-            ]
-        else:
-            yearly_movies = self.movies_df
-
-        yearly_graph = nx.Graph()
-
-        actor_ids_for_range = set(aid for actor_ids in yearly_movies['actor_ids'] for aid in actor_ids)
-        for actor_id in actor_ids_for_range:
-            a_name = self.actor_id_to_name.get(actor_id, "Unknown")
-            yearly_graph.add_node(actor_id, name=a_name)
-
-        for idx, row in yearly_movies.iterrows():
-            actor_list = row['actor_ids']
-            # Reuse same weighting scheme as in the actor graph
-            movie_pop = row['movie_popularity']
-            norm_pop = self.data.normalize_popularity(movie_pop)
-            increment = 1 + norm_pop
-            for i in range(len(actor_list)):
-                for j in range(i+1, len(actor_list)):
-                    a1, a2 = actor_list[i], actor_list[j]
-                    if yearly_graph.has_edge(a1, a2):
-                        yearly_graph[a1][a2]['weight'] += increment
-                    else:
-                        yearly_graph.add_edge(a1, a2, weight=increment)
-
-        if len(yearly_graph.nodes) == 0:
-            print(f"No data available for years {start_year}-{end_year}.")
-            return None, None, None
-
-        pr = nx.pagerank(yearly_graph, weight='weight')
-        most_influential = max(pr, key=pr.get)
-        return most_influential, self.actor_id_to_name[most_influential], pr[most_influential]
-
-    def find_shortest_actor_connection(self, actor_name_1, actor_name_2):
-        """
-        Finds the shortest connection between two actors in the actor graph.
-
-        Args:
-            actor_name_1 (str): Name of the first actor.
-            actor_name_2 (str): Name of the second actor.
-
-        Returns:
-            tuple: (list of actor names in the shortest path, explanation text).
-        """
-        # Convert actor names to lowercase
-        actor_name_1 = actor_name_1.strip().lower()
-        actor_name_2 = actor_name_2.strip().lower()
-
-        # Look up actor IDs
-        actor_row_1 = self.actors_df[self.actors_df['actor_name'].str.lower() == actor_name_1]
-        actor_row_2 = self.actors_df[self.actors_df['actor_name'].str.lower() == actor_name_2]
-
-        if actor_row_1.empty or actor_row_2.empty:
-            return None, "One or both actors not found in the dataset."
-
-        actor_id_1 = actor_row_1['actor_id'].iloc[0]
-        actor_id_2 = actor_row_2['actor_id'].iloc[0]
-
-        # Check if actor IDs exist in the actor graph
-        if actor_id_1 not in self.actor_graph or actor_id_2 not in self.actor_graph:
-            return None, "One or both actors not found in the actor graph."
-
-        try:
-            # Compute the shortest path
-            shortest_path_ids = nx.shortest_path(self.actor_graph, source=actor_id_1, target=actor_id_2)
-        except nx.NetworkXNoPath:
-            return None, "No connection between the specified actors."
-
-        shortest_path_names = [self.actor_id_to_name[aid] for aid in shortest_path_ids]
-
-        # Construct explanation text for each level
-        explanation_lines = []
-        for i in range(len(shortest_path_ids) - 1):
-            a1 = shortest_path_ids[i]
-            a2 = shortest_path_ids[i + 1]
-            edge_data = self.actor_graph.get_edge_data(a1, a2)
-            movies = edge_data.get('movies', [])
-            a1_name = f'{self.actor_id_to_name[a1]}'
-            a2_name = f'{self.actor_id_to_name[a2]}'
-
-            if movies:
-                movie_list = " / ".join([f"{movie}" for movie in movies])
-                explanation_lines.append(f"{a1_name} and {a2_name} both act in movies: {movie_list}")
-            else:
-                explanation_lines.append(f"{a1_name} and {a2_name} connection found (no movie list available)")
-
-        explanation_text = "<br>".join(explanation_lines)
-        return shortest_path_names, explanation_text
-
-
 
     def build_movie_graph(self, alpha=1.0, beta=0.5, gamma=1.0, delta=0.5):
         """
@@ -366,12 +261,13 @@ class Recommender:
         title_to_id (dict): Mapping of movie titles to their IDs.
     """
 
-    def __init__(self, movies_df, actors_df, actor_id_to_name, actor_graph, movie_graph):
+    def __init__(self, movies_df, actors_df, actor_id_to_name, actor_graph, movie_graph, data):
         self.movies_df = movies_df
         self.actors_df = actors_df
         self.actor_id_to_name = actor_id_to_name
         self.actor_graph = actor_graph
         self.movie_graph = movie_graph
+        self.data = data
 
         self.title_to_id = dict(zip(self.movies_df['title'].str.lower(), self.movies_df['movie_id']))
 
@@ -449,65 +345,103 @@ class Recommender:
 
         # Sort the results
         return result_df.sort_values(by=sort_column, ascending=ascending)
-
-
-
-    def recommend_similar_movies(self, movie_title, top_n=10):
+    
+    def get_most_influential_actor(self, start_year=None, end_year=None):
         """
-        Recommends movies similar to a specified movie.
+        Identifies the most influential actor within a specified year range using PageRank.
 
         Args:
-            movie_title (str): Title of the movie to find recommendations for.
-            top_n (int): Number of recommendations to return.
+            start_year (int, optional): The start year for filtering movies.
+            end_year (int, optional): The end year for filtering movies.
 
         Returns:
-            list: Recommended movies and their similarity scores.
+            tuple: (actor_id, actor_name, PageRank score) of the most influential actor.
         """
-        movie_title_lower = movie_title.lower()
-        if movie_title_lower not in self.title_to_id:
-            return []
-        mid = self.title_to_id[movie_title_lower]
-        if mid not in self.movie_graph:
-            return []
+        if start_year is not None and end_year is not None:
+            yearly_movies = self.movies_df[
+                (self.movies_df['year'] >= start_year) & (self.movies_df['year'] <= end_year)
+            ]
+        else:
+            yearly_movies = self.movies_df
 
-        neighbors = self.movie_graph[mid]
-        scored_neighbors = [(nmid, data['weight']) for nmid, data in neighbors.items()]
-        scored_neighbors.sort(key=lambda x: x[1], reverse=True)
+        yearly_graph = nx.Graph()
 
-        recommended = []
-        for nmid, score in scored_neighbors[:top_n]:
-            recommended.append((self.movie_graph.nodes[nmid]['title'], score))
-        return recommended
+        actor_ids_for_range = set(aid for actor_ids in yearly_movies['actor_ids'] for aid in actor_ids)
+        for actor_id in actor_ids_for_range:
+            a_name = self.actor_id_to_name.get(actor_id, "Unknown")
+            yearly_graph.add_node(actor_id, name=a_name)
 
+        for idx, row in yearly_movies.iterrows():
+            actor_list = row['actor_ids']
+            movie_pop = row['movie_popularity']
+            norm_pop = self.data.normalize_popularity(movie_pop)
+            increment = 1 + norm_pop
+            for i in range(len(actor_list)):
+                for j in range(i + 1, len(actor_list)):
+                    a1, a2 = actor_list[i], actor_list[j]
+                    if yearly_graph.has_edge(a1, a2):
+                        yearly_graph[a1][a2]['weight'] += increment
+                    else:
+                        yearly_graph.add_edge(a1, a2, weight=increment)
 
-def generate_movie_summary(client, movie_name, genres, overview, vote_average):
-    """
-    Generates a concise summary for a movie using OpenAI's API.
+        if len(yearly_graph.nodes) == 0:
+            print(f"No data available for years {start_year}-{end_year}.")
+            return None, None, None
 
-    Args:
-        client (OpenAI): OpenAI client instance.
-        movie_name (str): Name of the movie.
-        genres (str): Genres of the movie.
-        overview (str): Overview of the movie.
-        vote_average (float): Average rating of the movie.
+        pr = nx.pagerank(yearly_graph, weight='weight')
+        most_influential = max(pr, key=pr.get)
+        return most_influential, self.actor_id_to_name[most_influential], pr[most_influential]
 
-    Returns:
-        str: The generated movie summary.
-    """
-    prompt = (
-        f"Write a concise summary about the movie '{movie_name}' in less than 100 words. "
-        f"Genres: {genres}. It has an average rating of {vote_average}. "
-        f"Here is the overview: {overview}"
-        f"Keep the output format relatively fixed. Talk about the genres, vote_average and then a concise description of overview"
-    )
-    completion = client.chat.completions.create(
-        model="gpt-4o-mini",
-        messages=[
-            {"role": "system", "content": "You are a helpful assistant specializing in movies."},
-            {"role": "user", "content": prompt}
-        ]
-    )
-    return completion.choices[0].message.content
+    def find_shortest_actor_connection(self, actor_name_1, actor_name_2):
+        """
+        Finds the shortest connection between two actors in the actor graph.
+
+        Args:
+            actor_name_1 (str): Name of the first actor.
+            actor_name_2 (str): Name of the second actor.
+
+        Returns:
+            tuple: (list of actor names in the shortest path, explanation text).
+        """
+        actor_name_1 = actor_name_1.strip().lower()
+        actor_name_2 = actor_name_2.strip().lower()
+
+        actor_row_1 = self.actors_df[self.actors_df['actor_name'].str.lower() == actor_name_1]
+        actor_row_2 = self.actors_df[self.actors_df['actor_name'].str.lower() == actor_name_2]
+
+        if actor_row_1.empty or actor_row_2.empty:
+            return None, "One or both actors not found in the dataset."
+
+        actor_id_1 = actor_row_1['actor_id'].iloc[0]
+        actor_id_2 = actor_row_2['actor_id'].iloc[0]
+
+        if actor_id_1 not in self.actor_graph or actor_id_2 not in self.actor_graph:
+            return None, "One or both actors not found in the actor graph."
+
+        try:
+            shortest_path_ids = nx.shortest_path(self.actor_graph, source=actor_id_1, target=actor_id_2)
+        except nx.NetworkXNoPath:
+            return None, "No connection between the specified actors."
+
+        shortest_path_names = [self.actor_id_to_name[aid] for aid in shortest_path_ids]
+
+        explanation_lines = []
+        for i in range(len(shortest_path_ids) - 1):
+            a1 = shortest_path_ids[i]
+            a2 = shortest_path_ids[i + 1]
+            edge_data = self.actor_graph.get_edge_data(a1, a2)
+            movies = edge_data.get('movies', [])
+            a1_name = f'{self.actor_id_to_name[a1]}'
+            a2_name = f'{self.actor_id_to_name[a2]}'
+
+            if movies:
+                movie_list = " / ".join([f"{movie}" for movie in movies])
+                explanation_lines.append(f"{a1_name} and {a2_name} both act in movies: {movie_list}")
+            else:
+                explanation_lines.append(f"{a1_name} and {a2_name} connection found (no movie list available)")
+
+        explanation_text = "<br>".join(explanation_lines)
+        return shortest_path_names, explanation_text
 
 def visualize_direct_links(
     graph,
@@ -521,7 +455,7 @@ def visualize_direct_links(
     main_node_size=1200,
     base_size=300,
     max_size=1000,
-    wrap_width=20  # Add a parameter for wrapping width
+    wrap_width=20
 ):
     """
     Visualizes the top N direct connections of a given node in a graph.
@@ -543,13 +477,6 @@ def visualize_direct_links(
     Returns:
         bool: True if visualization is successful, False otherwise.
     """
-
-    # Ensure top_n is an integer
-    try:
-        top_n = int(top_n)
-    except (ValueError, TypeError):
-        top_n = 10  # Default to 10 if invalid or not provided
-
     if main_node_id not in graph:
         print(f"Main node ID {main_node_id} not found in the graph.")
         return False
@@ -585,15 +512,19 @@ def visualize_direct_links(
     # Wrap the labels
     labels = {n: wrap_label(get_label_func(n), wrap_width) for n in subgraph.nodes()}
 
-    # Compute node sizes
+    # Compute node sizes and colors
     node_sizes = []
+    node_colors = []
+
     for node in subgraph.nodes():
         if node == main_node_id:
             node_sizes.append(main_node_size)
+            node_colors.append("gold")  # Set central node to gold color
         else:
-            w = subgraph[main_node_id][node]['weight']
-            scaled_size = base_size + (w / max_weight) * (max_size - base_size)
+            weight = subgraph[main_node_id][node]["weight"]
+            scaled_size = base_size + (weight / max_weight) * (max_size - base_size)
             node_sizes.append(scaled_size)
+            node_colors.append(node_color)  # Use the specified base node color
 
     plt.figure(figsize=(12, 10), facecolor=background_color)
     nx.draw(
@@ -601,13 +532,13 @@ def visualize_direct_links(
         pos,
         with_labels=True,
         labels=labels,
-        node_color=node_color,
+        node_color=node_colors,
         edge_color=edge_color,
         font_size=12,
         font_color="white",
         font_weight="bold",  # Set font to bold
         node_size=node_sizes,
-        width=2.0
+        width=2  # Adjust edge width based on weight
     )
 
     edge_labels = nx.get_edge_attributes(subgraph, "weight")
@@ -616,7 +547,7 @@ def visualize_direct_links(
         subgraph,
         pos,
         edge_labels=formatted_edge_labels,
-        font_size=10,
+        font_size=12,
         label_pos=0.5,
         font_color="#f1f4db",
         rotate=False,

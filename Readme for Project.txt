@@ -2,94 +2,98 @@
 
 ## Overview
 Cinematic Galaxy Nexus is an interactive movie search and recommendation system that uses a graph-based approach to explore relationships between movies and actors. This web-based tool allows users to:
+
 1.Search for movies by title, genre, or actor.
 2.Discover the most influential actors within a specific year range.
-3.Find the shortest connection between two actors based on shared movies.
+3.Find the shortest connection path between any two actors based on co-starring movies.
 4.Generate movie and actor recommendations with visualized connection graphs.
-Note: The system is built using Flask (backend) and JavaScript (frontend), combined with graph-based algorithms via NetworkX for processing relationships between movies and actors.
+Note: This system is built using Flask framework
 
 ## Interactions and Prompts
 
 # Movie Search Engine
 1.Prompts:
-    "Search By" (Title, Actor, Genre) - drop down box
-    "Search Query" (Input field)
-    "Sort By" (Release Time, Average Vote Rate, Vote Count, Popularity) - drop down box
-    "Order" (Ascending or Descending) - drop down box
+    Drop Down Box:   "Search By" (Title, Actor, Genre) 
+    User-input Text: "Search Query"
+    Drop Down Box:   "Sort By" (Release Time, Average Vote Rate, Vote Count, Popularity) 
+    Drop Down Box:   "Order" (Ascending or Descending) 
 2.Output:
-    A list of movies with Name, Genres, Average Vote, Vote Count, Popularity, Release Date, Overview and hyperlink nevigating to homepage.
+    A list of movies with Name, Genres, Average Vote, Vote Count, Popularity, Release Date, Overview and hyperlink navigating to movie's homepage.
+
 # Most Influential Actor
 1.Prompts:
-    "Start Year" and "End Year" (Numeric inputs for a year range, limited from 2015 to 2024)
+    User-input Number: "Enter Start Year" | "Enter End Year" (limited from 2015 to 2024)
 2.Output:
-    The most influential actor in a given time period, based on page-rank weighted by popularity of movie.
+    The most influential actor in a given time period, based on page-rank weighted by popularity of movies.
+
 # Actor Recommendation
 1.Prompts:
-    "Actor Name" (Text input)
+    User-input Text: "Enter Actor Name"
 2.Output:
-    1)Top 10 Recommended Actors who have significant shared connections (co-starring in movies).
-    2)Graph Visualization of direct actor connections, weighted by co-starring movies and its popularity.
+    1)Top 10 Recommended actors based on relevance to target actor
+    2)Graph Visualization of direct actors' connections, weighted by co-starring movies and corresponding popularity.
+
 # Shortest Actor Connection
 1.Prompts:
-    "Actor Name 1" and "Actor Name 2" (Text inputs)
+    User-input Text: "Enter Actor Name 1" and "Enter Actor Name 2"
 2.Output: 
-    The shortest connection (path) between the two actors, with an explanation of the movies connecting them.
+    The shortest connection path between any two actors, with navigation using co-starring movies
+
 # Movie Recommendation
 1.Prompts:
-    "Movie Name" (Text input)
+    User-input Text: "Movie Name"
 2.Output:
-    1)Top 10 Recommended Movies sharing significantly similar actors or genres based on Jaccard Index.
-    2)Graph Visualization of direct movie connections.
+    1)Top 10 Recommended Movies based on shared actors or genres.
+    2)Graph Visualization of movies' connection, weighted by Jaccard Index.
 
-## Special Instructions
-# Required Files:
-    1.movies_actors.csv (Dataset containing movie and actor data, extracted from TMDB API.)
-        this csv file is already in the project directory. It is created by TMDB_Data_Retrieve.py and it contains movie data from 2015-2024. If you want to explore movie data out of this range, you can modify TMDB_Data_Retrieve.py. (API keys: eyJhbGciOiJIUzI1NiJ9.eyJhdWQiOiI1Zjc2NjgzYzZiMzQ2MThlZTVjZTY4ZTU3M2ZlYzc0NyIsIm5iZiI6MTczMjQ4ODAyOS43MjcsInN1YiI6IjY3NDNhYjVkNjg4MjMwMDRjYTljYjJjMiIsInNjb3BlcyI6WyJhcGlfcmVhZCJdLCJ2ZXJzaW9uIjoxfQ.KmOn1hc0C0Q0VGZ8HxPraIeu9f9GvYUAK-MbiekEFK0)
+API note: To save time for launching project. I have saved data retrieved from TMDB API into movies_actors.csv file. So you do not need API key to launch this project.
+This file contains most movies (first 50 pages) released from 2015 to 2024 on TMDB database. If you want to retrieve even more movie data, which may spend long time, from TMDB API, you can modify release_year parameters in TMDB_Data_Retrieve.py. and run it. Then the exist movies_actors.csv file will be replaced and you can use this recommendation system to explore more movie data. Have fun!
 
-    Note: Ensure movies_actors.csv is placed in the same directory as the project.
+API keys (Optional): eyJhbGciOiJIUzI1NiJ9.eyJhdWQiOiI1Zjc2NjgzYzZiMzQ2MThlZTVjZTY4ZTU3M2ZlYzc0NyIsIm5iZiI6MTczMjQ4ODAyOS43MjcsInN1YiI6IjY3NDNhYjVkNjg4MjMwMDRjYTljYjJjMiIsInNjb3BlcyI6WyJhcGlfcmVhZCJdLCJ2ZXJzaW9uIjoxfQ.KmOn1hc0C0Q0VGZ8HxPraIeu9f9GvYUAK-MbiekEFK0)
 
+******************************************Launch Instruction************************************
+1. Download the whole project directory to local computer [Do not change directory structure]
+2. Required Python Packages: Flask, pandas, numpy, networkx, matplotlib, requests
+	Install them using the following command:
+	#pip install flask pandas numpy networkx matplotlib requests
+3. Running run.py on terminal using following command:
+	#python3 run.py
+4. If successful, you will see "Running on http://xxx.x.x.x:5000" on your terminal. Open that http://127.0.0.1:5000/ in your browser then you can interact with this website.
 
-# Static Directory:
-The project generates graph images dynamically. Ensure a static/ directory exists in your project folder for saving these images.
+## Directory Structure [do not change]
 
-# Required Python Packages
-Flask, pandas, numpy, networkx, matplotlib, requests, textwrap
-Install them using the following command:
-#pip install flask pandas numpy networkx matplotlib requests textwrap
-
-# Running the Program:
-Use python app.py to start the Flask server.
-Open http://127.0.0.1:5000/ in your browser.
-
-## Directory Structure
 movie_app/
 │
 ├── _pychche_
 ├── static/
-│   ├── style.css
-│   └── images/
-│       └── movie_universe_background.png
+│   ├── css
+│   │   
+│   ├── images
+│   └── music
 ├── templates
-│   └── index.html
-├── app.py
+│   
+├── run.py
 ├── DataStructrue.py
 ├── movies_actors.csv
+├── TMDB_Data_Retrieve.py
+
 
 
 Network (Graph) Organization
 1. Actor Graph
 Nodes: Actors (represented by actor IDs and names).
-Edges: Connections between actors who starred in the same movie.
+Edges: Connections between actors who co-starring same movies.
 Edge Weights: Calculated based on movie popularity (normalized values).
 
 2. Movie Graph
 Nodes: Movies (represented by movie IDs and titles).
-Edges: Connections between movies sharing Actors (shared actors) and Genres (common genres).
+Edges: Connections between movies with shared Actors and Genres.
 Edge Weights: Calculated using Jaccard Index based on shared actors and genres
 
 Output Visualizations
-Actor and Movie Graphs are dynamically visualized with:
-Node colors: Pink (actors), Skyblue (movies)
-Edge colors: Skyblue for actors, Pink for movies
+1. Actors' connection visualization shows the input actor in the center, with top 10 most relevant actors radiating outward.
+Numbers on edge indicates degree centrality weighted by popularity. Node size represents relevance.
+2. Movies' connection visualization shows the input movie in the center, with their top 10 most similar movies radiating outward. Numbers on edge indicate Jaccard Index based on genres and actors. Node size represents degree of similarity.
 
-Enjoy navigating the Cinematic Galaxy! 🚀
+
+Welcome to Cinematic Galaxy Nexus. Have Fun! 🚀🚀🚀
