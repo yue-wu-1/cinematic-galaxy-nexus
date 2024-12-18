@@ -58,7 +58,7 @@ API keys (Optional): eyJhbGciOiJIUzI1NiJ9.eyJhdWQiOiI1Zjc2NjgzYzZiMzQ2MThlZTVjZT
 	#pip install flask pandas numpy networkx matplotlib requests
 3. Running run.py on terminal using following command:
 	#python3 run.py
-4. If successful, you will see "Running on http://xxx.x.x.x:5000" on your terminal. Open that http://127.0.0.1:5000/ in your browser then you can interact with this website.
+4. If successful, you will see "Running on http://xxx.x.x.x:5000" on your terminal. Open that "http://xxx.x.x.x:5000/" in your browser then you can interact with this website.
 
 ## Directory Structure [do not change]
 
