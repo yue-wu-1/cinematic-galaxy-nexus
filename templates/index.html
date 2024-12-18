@@ -1,0 +1,694 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/> 
+    <meta name="description" content="Explore the Cinematic Galaxy Nexus to discover influential actors, movie recommendations, and visual connections between stars and films.">
+    <meta name="keywords" content="movies, actors, cinematic galaxy, movie recommendations, star nexus">
+    <title>Cinematic Galaxy Nexus</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-image: url('/static/images/movie_universe_background.png');
+            background-size: cover;
+            background-attachment: fixed;
+            background-position: center;
+            color: white;
+        }
+
+        h1 {
+            color: #00e1ff;
+            text-align: center;
+            margin-top: 20px;
+        }
+        .section {
+            margin: 30px auto;
+            padding: 20px;
+            background: rgba(0, 0, 0, 0.7); /* Semi-transparent black */
+            border-radius: 10px;
+            max-width: 800px;
+        }
+        .section h2 {
+            margin-bottom: 10px;
+            color: #fa87a4;
+        }
+        input, select, button {
+            margin-bottom: 10px;
+            display: block;
+            width: 100%;
+            padding: 10px;
+            font-size: 16px;
+            border: none;
+            border-radius: 5px;
+        }
+        input, select {
+            background: #222;
+            color: white;
+        }
+        button {
+            background: #00e1ff;
+            color: black;
+            cursor: pointer;
+            transition: background 0.3s;
+        }
+        button:hover {
+            background: #00e1ff;
+        }
+        .results {
+            border: 1px solid #444;
+            padding: 10px;
+            margin-top: 10px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 5px;
+        }
+        .results div {
+            margin-bottom: 10px;
+        }
+        img {
+            max-width: 100%;
+            height: auto;
+        }
+        /* Highlight class for matched search terms */
+        .highlight {
+            background-color: yellow; /* Background color for highlight */
+            color: black;             /* Text color for readability */
+            font-weight: bold;        /* Optional: Make the text bold */
+            border-radius: 3px;       /* Optional: Slightly round the corners */
+        }
+        .fancy-star {
+            font-size: 1.8em; /* Make the font larger */
+            color: #f1f4db; /* Light yellowish color for star-like feel */
+            text-shadow: 
+                0 0 5px #ffd700, /* Gold glow */
+                0 0 10px #ffec8b, /* Light gold glow */
+                0 0 20px #ffea00, /* Deeper gold glow */
+                0 0 30px #ffffe0; /* Light white glow for depth */
+            font-weight: bold;
+            display: inline-block;
+            animation: twinkle 1.5s infinite alternate; /* Twinkling animation */
+        }
+
+        /* Animation for twinkle effect */
+        @keyframes twinkle {
+            0% {
+                text-shadow: 
+                    0 0 5px #ffd700, 
+                    0 0 10px #ffec8b, 
+                    0 0 20px #ffea00, 
+                    0 0 30px #ffffe0;
+            }
+            100% {
+                text-shadow: 
+                    0 0 8px #ffd700, 
+                    0 0 15px #ffec8b, 
+                    0 0 25px #ffea00, 
+                    0 0 40px #ffffe0;
+            }
+        }
+
+        /* Spaceship styling */
+        .spaceship {
+            position: fixed;
+            width: 50px; /* Adjust the size of the spaceship */
+            height: auto;
+            z-index: 1000; /* Ensures it stays above all content */
+            animation: moveAroundEdges 20s linear infinite;
+        }
+
+        /* Animation for moving the spaceship around the edges */
+        @keyframes moveAroundEdges {
+            0% { top: 0; left: 0; transform: rotate(0deg); }
+            25% { top: 0; left: 100%; transform: rotate(90deg); }
+            50% { top: 100%; left: 100%; transform: rotate(180deg); }
+            75% { top: 100%; left: 0; transform: rotate(270deg); }
+            100% { top: 0; left: 0; transform: rotate(360deg); }
+        }
+
+
+        /* Button styling for background music */
+        #music-toggle-btn {
+            position: fixed;
+            top: 10px;
+            left: 10px; /* Align on the left */
+            width: 40px;
+            height: 40px;
+            background-color: #464a48;
+            color: skyblue;
+            border: 2px solid black;
+            border-radius: 50%;
+            font-size: 18px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            z-index: 1000;
+        }
+
+        #music-toggle-btn.on::before {
+            content: "🔊"; /* Trumpet icon when music is on */
+        }
+
+        #music-toggle-btn.off::before {
+            content: "🔈"; /* Trumpet with slash when music is off */
+        }
+
+        .section {
+            margin: 30px auto;
+            padding: 20px;
+            background: rgba(0, 0, 0, 0.7); /* Semi-transparent black */
+            border-radius: 10px;
+            max-width: 800px;
+        }
+
+        @media (max-width: 600px) {
+            body {
+                font-size: 14px; /* Reduce the base font size */
+            }
+
+            h1 {
+                font-size: 20px; /* Smaller heading size */
+            }
+
+            .section {
+                margin: 20px auto; /* Adjust spacing for smaller viewports */
+                padding: 15px; /* Reduce padding */
+            }
+
+            button {
+                font-size: 14px; /* Adjust button text size */
+                padding: 8px; /* Reduce button padding */
+            }
+
+            #music-toggle-btn {
+                width: 30px; /* Smaller toggle button */
+                height: 30px;
+                font-size: 14px;
+            }
+        }
+
+
+
+
+    </style>
+</head>
+<body>
+    <h1>Cinematic Galaxy Nexus</h1>
+
+    <!-- Music Toggle Button -->
+    <div id="music-toggle-btn" class="on" aria-label="Toggle background music"></div>
+
+
+    <!-- Hidden Music Player -->
+    <audio id="background-music" loop>
+        <source src="/static/music/02 - Cornfield Chase.mp3" type="audio/mp3">
+        Your browser does not support the audio element.
+    </audio>
+
+
+
+    <!-- Spaceship Animation -->
+    <div class="spaceship-container">
+        <img src="/static/images/icons8-space-100.png" alt="Spaceship" class="spaceship" />
+    </div>
+
+    <!-- 1. Galaxy Nevigation - Movie Search Engine -->
+    <div class="section">
+        <h2>Galaxy Nevigation - Movie Search Engine</h2>
+        <label for="search-factor">Search By:</label>
+        <select id="search-factor">
+            <option value="title">Title</option>
+            <option value="actor">Actor</option>
+            <option value="genre">Genre</option>
+        </select>
+        <input type="text" id="search-query" placeholder="Enter search query" />
+        <label for="sort-option">Sort By:</label>
+        <select id="sort-option">
+            <option value="release time">Release Time</option>
+            <option value="average vote rate">Average Vote Rate</option>
+            <option value="vote count">Vote Count</option>
+            <option value="popularity">Popularity</option>
+        </select>
+        <label for="sort-order">Order:</label>
+        <select id="sort-order">
+            <option value="ascending">Ascending</option>
+            <option value="descending">Descending</option>
+        </select>
+        <button onclick="searchMovies()">Search Movies</button>
+        <div id="search-results" class="results"></div>
+    </div>
+
+    <!-- 2. Brightest Star - Most Influential Actor Across Years -->
+    <div class="section">
+        <h2>Brightest Star - Most Influential Actor Across Years</h2>
+        <input type="number" id="start_year" placeholder="Start" min="2015" max="2024" />
+        <input type="number" id="end_year" placeholder="End" min="2015" max="2024" />
+        <button onclick="findInfluentialActors()">Find Most Influential Actor</button>
+        <div id="influential-results" class="results"></div>
+    </div>
+
+    <!-- 3. Star Nexus - Actors Recommendation -->
+    <div class="section">
+        <h2>Star Nexus - Actors Recommendation</h2>
+        <input type="text" id="actor_name_connections" placeholder="Actor Name" />
+        <button onclick="getActorConnections()">Recommend Actors (top10)</button>
+        <button onclick="getActorConnectionsImage()">Visualize Connections</button>
+        <div id="connections-results" class="results"></div>
+        <div id="connections-image-results" class="results"></div>
+    </div>
+
+    <!-- 4. Star Trek - Shortest Actors Connection -->
+    <div class="section">
+        <h2>Star Trek - Shortest Actors Connection</h2>
+        <input type="text" id="actor_name_1" placeholder="Actor Name 1" />
+        <input type="text" id="actor_name_2" placeholder="Actor Name 2" />
+        <button onclick="findShortestActorConnection()">Find Shortest Connection</button>
+        <div id="shortest-actor-connection-results" class="results"></div>
+    </div>
+
+    <!-- 5. Galaxy Nexus - Movies Recommendation -->
+    <div class="section">
+        <h2>Galaxy Nexus - Movies Recommendation</h2>
+        <input type="text" id="movie_name_connections" placeholder="Movie Name" />
+        <button onclick="getMovieConnections()">Recommend Movies (top10)</button>
+        <button onclick="getMovieConnectionsImage()">Visualize Connections</button>
+        <div id="connections-movie-results" class="results"></div>
+        <div id="connections-movie-image-results" class="results"></div>
+    </div>
+
+    <script>
+
+        const music = document.getElementById("background-music");
+        const musicToggleBtn = document.getElementById("music-toggle-btn");
+
+        // Function to toggle music playback
+        musicToggleBtn.addEventListener("click", () => {
+            if (music.paused) {
+                music.play();
+                musicToggleBtn.classList.add("on");
+                musicToggleBtn.classList.remove("off");
+            } else {
+                music.pause();
+                musicToggleBtn.classList.add("off");
+                musicToggleBtn.classList.remove("on");
+            }
+        });
+
+        // Play music on load (if allowed by browser policy)
+        window.addEventListener("load", () => {
+            const playPromise = music.play();
+            if (playPromise !== undefined) {
+                playPromise.catch(() => {
+                    console.warn("Autoplay prevented by browser.");
+                });
+            }
+        });
+
+        /**
+         * Escapes special characters in a string for use in a regular expression.
+         * @param {string} string - The string to escape.
+         * @returns {string} - The escaped string.
+         */
+        function escapeRegExp(string) {
+            return string.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'); // $& means the whole matched string
+        }
+
+        /**
+         * Highlights all occurrences of the query in the given text.
+         * @param {string} text - The text to search within.
+         * @param {string} query - The search query.
+         * @returns {string} - The text with highlighted search terms.
+         */
+        function highlightText(text, query) {
+            if (!query) return text; // If query is empty, return the original text
+
+            const escapedQuery = escapeRegExp(query.toLowerCase());
+            const regex = new RegExp(`(${escapedQuery})`, 'gi'); // Case-insensitive search
+
+            return text.replace(regex, '<span class="highlight">$1</span>');
+        }
+
+        async function postData(url, data) {
+            try {
+                const response = await fetch(url, {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify(data),
+                });
+                if (!response.ok) {
+                    throw new Error(`HTTP error! Status: ${response.status}`);
+                }
+                return await response.json();
+            } catch (error) {
+                console.error("Error posting data:", error);
+                alert("An error occurred. Please try again later.");
+            }
+        }
+
+
+        async function findInfluentialActors() {
+            const startYear = document.getElementById("start_year").value;
+            const endYear = document.getElementById("end_year").value;
+
+            const data = await postData("/influential_actor", { start_year: startYear, end_year: endYear });
+            const resultsDiv = document.getElementById("influential-results");
+
+            resultsDiv.innerHTML = ""; // Clear previous results
+
+            let periodText = (startYear === endYear)
+                ? `in ${startYear}`
+                : `between ${startYear} and ${endYear}`;
+
+            if (data.success) {
+                // Create a paragraph element to hold the result
+                const p = document.createElement("p");
+                p.textContent = `Most Influential Actor ${periodText}: `;
+
+                // Create a clickable span for the actor name
+                const actorSpan = document.createElement("span");
+                actorSpan.textContent = data.actor_name;
+                actorSpan.style.color = "pink";
+                actorSpan.style.cursor = "pointer";
+                actorSpan.title = "Click to copy";
+
+                // Add click event to copy the actor name to the clipboard
+                actorSpan.addEventListener("click", async () => {
+                    try {
+                        await navigator.clipboard.writeText(data.actor_name);
+                        const originalText = actorSpan.textContent;
+                        actorSpan.textContent = "Copied!";
+                        setTimeout(() => {
+                            actorSpan.textContent = originalText;
+                        }, 2000);
+                    } catch (err) {
+                        console.error("Failed to copy text:", err);
+                    }
+                });
+
+                // Append the actor span to the paragraph
+                p.appendChild(actorSpan);
+
+                // Add the score information
+                const scoreText = document.createTextNode(` (PageRank Score: ${data.score.toFixed(4)})`);
+                p.appendChild(scoreText);
+
+                // Finally, append the paragraph to resultsDiv
+                resultsDiv.appendChild(p);
+
+            } else {
+                resultsDiv.innerHTML = `<p>${data.message}</p>`;
+            }
+        }
+
+        async function getActorConnections() {
+            const actorName = document.getElementById("actor_name_connections").value;
+            const data = await postData("/actor_connections", { actor_name: actorName });
+            const resultsDiv = document.getElementById("connections-results");
+            resultsDiv.innerHTML = ""; // Clear previous results
+
+            if (data.success) {
+                data.connections.forEach(conn => {
+                    const div = document.createElement("div");
+
+                    // Create a clickable span for the actor name
+                    const actorSpan = document.createElement("span");
+                    actorSpan.textContent = conn.actor_name;
+                    actorSpan.style.color = "pink";
+                    actorSpan.style.cursor = "pointer";
+                    actorSpan.title = "Click to copy";
+
+                    // Add click event to copy the actor name to the clipboard
+                    actorSpan.addEventListener("click", async () => {
+                        try {
+                            await navigator.clipboard.writeText(conn.actor_name);
+                            const originalText = actorSpan.textContent;
+                            actorSpan.textContent = "Copied!";
+                            setTimeout(() => {
+                                actorSpan.textContent = originalText;
+                            }, 2000);
+                        } catch (err) {
+                            console.error("Failed to copy text:", err);
+                        }
+                    });
+
+                    div.appendChild(actorSpan);
+                    resultsDiv.appendChild(div);
+                });
+            } else {
+                resultsDiv.innerHTML = `<p>${data.message}</p>`; // Display error message
+            }
+        }
+
+        async function getActorConnectionsImage() {
+            const actorName = document.getElementById("actor_name_connections").value; 
+            const resultsDiv = document.getElementById("connections-image-results");
+            resultsDiv.innerHTML = ""; // Clear previous results
+
+            const data = await postData("/actor_connections_image", { actor_name: actorName });
+
+            if (data.success) {
+                const img = document.createElement("img");
+                img.src = data.image_url;
+
+                // Ensure the image is styled properly
+                img.style.maxWidth = "100%";
+                img.style.height = "auto";
+                img.style.display = "block"; // Prevent inline layout issues
+
+                resultsDiv.appendChild(img);
+            } else {
+                resultsDiv.innerHTML = `<p>${data.message}</p>`;
+            }
+        }
+
+        async function findShortestActorConnection() {
+            const actorName1 = document.getElementById("actor_name_1").value;
+            const actorName2 = document.getElementById("actor_name_2").value;
+            const data = await postData("/shortest_actor_connection", { actor_name_1: actorName1, actor_name_2: actorName2 });
+            const resultsDiv = document.getElementById("shortest-actor-connection-results");
+            resultsDiv.innerHTML = ""; // Clear previous results
+
+            if (data.success) {
+                // Shortest Path Display
+                const pathLine = document.createElement("p");
+                pathLine.innerHTML = "<strong>Shortest Path:</strong> ";
+
+                data.path.forEach((actor, index) => {
+                    const actorSpan = document.createElement("span");
+                    actorSpan.textContent = actor;
+                    actorSpan.style.color = "pink";
+                    actorSpan.style.cursor = "pointer";
+                    actorSpan.title = "Click to copy";
+
+                    actorSpan.addEventListener("click", async () => {
+                        await navigator.clipboard.writeText(actor);
+                        actorSpan.textContent = "Copied!";
+                        setTimeout(() => {
+                            actorSpan.textContent = actor;
+                        }, 2000);
+                    });
+
+                    pathLine.appendChild(actorSpan);
+                    if (index < data.path.length - 1) {
+                        pathLine.appendChild(document.createTextNode(" → "));
+                    }
+                });
+                resultsDiv.appendChild(pathLine);
+
+                // Explanation Display
+                if (data.explanation) {
+                    const explanationDiv = document.createElement("div");
+                    explanationDiv.innerHTML = "<strong>Journey Guide:</strong>";
+
+                    const lines = data.explanation.split("<br>");
+                    lines.forEach(line => {
+                        const listItem = document.createElement("p");
+                        const movieMatch = line.match(/both act in movies: (.*)/); // Extract movie list
+                        const actorPart = line.replace(/both act in movies: .*/, "both act in movies:"); // Keep actor text
+
+                        // Actor text part
+                        const actorText = document.createElement("span");
+                        actorText.innerHTML = actorPart;
+                        listItem.appendChild(actorText);
+
+                        // Add clickable movie names
+                        if (movieMatch && movieMatch[1]) {
+                            const movies = movieMatch[1].split(" / ");
+                            movies.forEach((movie, index) => {
+                                const movieSpan = document.createElement("span");
+                                movieSpan.textContent = movie.trim();
+                                movieSpan.style.color = "skyblue";
+                                movieSpan.style.cursor = "pointer";
+                                movieSpan.title = "Click to copy";
+
+                                movieSpan.addEventListener("click", async () => {
+                                    await navigator.clipboard.writeText(movie.trim());
+                                    movieSpan.textContent = "Copied!";
+                                    setTimeout(() => {
+                                        movieSpan.textContent = movie.trim();
+                                    }, 2000);
+                                });
+
+                                listItem.appendChild(movieSpan);
+
+                                if (index < movies.length - 1) {
+                                    listItem.appendChild(document.createTextNode(" | "));
+                                }
+                            });
+                        }
+
+                        explanationDiv.appendChild(listItem);
+                    });
+
+                    resultsDiv.appendChild(explanationDiv);
+                }
+            } else {
+                resultsDiv.innerHTML = `<p>${data.message}</p>`; // Display error message
+            }
+        }
+
+
+        async function getMovieConnections() {
+            const movieName = document.getElementById("movie_name_connections").value;
+            const data = await postData("/movie_connections", { movie_name: movieName });
+            const resultsDiv = document.getElementById("connections-movie-results");
+            resultsDiv.innerHTML = ""; // Clear previous results
+
+            if (data.success) {
+                data.connections.forEach(conn => {
+                    const div = document.createElement("div");
+
+                    // Create a clickable span for the movie name
+                    const movieSpan = document.createElement("span");
+                    movieSpan.textContent = conn;
+                    movieSpan.style.color = "skyblue";
+                    movieSpan.style.cursor = "pointer";
+                    movieSpan.title = "Click to copy";
+
+                    // Add click event to copy the movie name to the clipboard
+                    movieSpan.addEventListener("click", async () => {
+                        try {
+                            await navigator.clipboard.writeText(conn);
+                            const originalText = movieSpan.textContent;
+                            movieSpan.textContent = "Copied!";
+                            setTimeout(() => {
+                                movieSpan.textContent = originalText;
+                            }, 2000);
+                        } catch (err) {
+                            console.error("Failed to copy text:", err);
+                        }
+                    });
+
+                    div.appendChild(movieSpan);
+                    resultsDiv.appendChild(div);
+                });
+            } else {
+                resultsDiv.innerHTML = `<p>${data.message}</p>`; // Display error message
+            }
+        }
+
+        async function getMovieConnectionsImage() {
+            const movieName = document.getElementById("movie_name_connections").value;
+            const resultsDiv = document.getElementById("connections-movie-image-results");
+            resultsDiv.innerHTML = ""; // Clear previous results
+
+            const data = await postData("/movie_connections_image", { movie_name: movieName });
+
+            if (data.success) {
+                const img = document.createElement("img");
+                img.src = data.image_url;
+
+                // Ensure the image is styled properly
+                img.style.maxWidth = "100%"; // Make the image responsive
+                img.style.height = "auto";   // Maintain aspect ratio
+                img.style.display = "block"; // Prevent inline layout issues
+
+                resultsDiv.appendChild(img);
+            } else {
+                resultsDiv.innerHTML = `<p>${data.message}</p>`;
+            }
+        }
+
+        async function searchMovies() {
+            const factor = document.getElementById("search-factor").value;
+            const query = document.getElementById("search-query").value;
+            const sortBy = document.getElementById("sort-option").value;
+            const sortOrder = document.getElementById("sort-order").value;
+            const ascending = sortOrder === "ascending";
+
+            const data = await postData("/search_movies", { factor, query, sort_by: sortBy, ascending });
+            const resultsDiv = document.getElementById("search-results");
+            resultsDiv.innerHTML = ""; // Clear previous results
+
+            if (data.success) {
+                if (data.results.length === 0) {
+                    resultsDiv.innerHTML = `<p>No results found for '${query}'.</p>`;
+                    return;
+                }
+
+                data.results.forEach(movie => {
+                    // Highlight based on the selected factor
+                    let highlightedTitle = movie.title;
+                    let highlightedGenres = movie.genres;
+                    let highlightedOverview = movie.overview || 'N/A';
+
+                    if (factor === "title") {
+                        highlightedTitle = highlightText(movie.title, query);
+                    } else if (factor === "genre") {
+                        highlightedGenres = highlightText(movie.genres, query);
+                    }
+
+                    // Highlight actors only if the search factor is 'actor'
+                    const actorsList = movie.actors.map(actor => {
+                        const actorName = factor === "actor" ? highlightText(actor, query) : actor;
+                        return `<span style="color: pink; font-weight: bold;">${actorName}</span>`;
+                    }).join(", ");
+
+                    // Create a container div for each movie
+                    const movieDiv = document.createElement("div");
+                    movieDiv.innerHTML = `
+                        <p class="fancy-star">${highlightedTitle}</p>
+                        <p>Actors: ${actorsList}</p>
+                        <p>Genres: ${highlightedGenres}</p>
+                        <p>Average Vote: ${movie.vote_average}</p>
+                        <p>Vote Count: ${movie.vote_count}</p>
+                        <p>Popularity: ${movie.movie_popularity}</p>
+                        <p>Release Date: ${movie.release_date}</p>
+                        <p>Overview: ${highlightedOverview}</p>
+                        <p>Homepage: ${movie.homepage ? `<a href="${movie.homepage}" target="_blank" style="color: #f1f4db;">Visit Homepage</a>` : 'N/A'}</p>
+                    `;
+
+                    resultsDiv.appendChild(movieDiv);
+                });
+            } else {
+                resultsDiv.innerHTML = `<p>${data.message}</p>`;
+            }
+        }
+
+        // Event listeners for dynamic updates
+        document.getElementById("search-factor").addEventListener("change", searchMovies);
+        document.getElementById("search-query").addEventListener("input", searchMovies);
+        document.getElementById("sort-option").addEventListener("change", searchMovies);
+        document.getElementById("sort-order").addEventListener("change", searchMovies);
+
+        function setupAutoClear(inputId, resultId) {
+            const inputElement = document.getElementById(inputId);
+            const resultElement = document.getElementById(resultId);
+            inputElement.addEventListener("input", () => {
+                if (inputElement.value.trim() === "") {
+                    resultElement.innerHTML = "";
+                }
+            });
+        }
+        setupAutoClear("search-query", "search-results");
+        setupAutoClear("start_year", "influential-results");
+        setupAutoClear("end_year", "influential-results");
+        setupAutoClear("actor_name_connections", "connections-results");
+        setupAutoClear("actor_name_connections", "connections-image-results");
+        setupAutoClear("actor_name_1", "shortest-actor-connection-results");
+        setupAutoClear("actor_name_2", "shortest-actor-connection-results");
+        setupAutoClear("movie_name_connections", "connections-movie-results");
+    </script>
+</body>
+</html>
