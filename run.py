@@ -43,9 +43,6 @@ Author:
 """
 
 from flask import Flask, render_template, request, jsonify
-import pandas as pd
-import numpy as np
-import networkx as nx
 from DataStructure import MovieData, GraphBuilder, Recommender, visualize_direct_links
 #from openai import OpenAI
 import os
@@ -61,7 +58,7 @@ graph_builder = GraphBuilder(data.movies_df, data.actors_df, data.actor_id_to_na
 actor_graph = graph_builder.build_actor_graph()
 movie_graph = graph_builder.build_movie_graph(alpha=1.0, beta=0.5, gamma=1.0, delta=0.5)
 
-recommender = Recommender(data.movies_df, data.actors_df, data.actor_id_to_name, actor_graph, movie_graph)
+recommender = Recommender(data.movies_df, data.actors_df, data.actor_id_to_name, actor_graph, movie_graph, data)
 #client = OpenAI()
 
 @app.route("/")
@@ -100,7 +97,7 @@ def influential_actor():
         end_year = int(end_year)
         if start_year > end_year:
             return jsonify({"success": False, "message": "Start year must be less than or equal to the end year."})
-        actor_id, actor_name, score = graph_builder.get_most_influential_actor(start_year, end_year)
+        actor_id, actor_name, score = recommender.get_most_influential_actor(start_year, end_year)
         if actor_id:
             return jsonify({"success": True, "actor_name": actor_name, "score": score})
         return jsonify({"success": False, "message": f"No data available for the range {start_year} to {end_year}."})
@@ -197,7 +194,7 @@ def actor_connections_image():
             get_label_func=lambda n: data.actor_id_to_name.get(n, str(n)),  # Map actor_id to actor name
             node_color="pink",  # Set to pink for consistency
             edge_color="skyblue",     # Set edge color to skyblue theme
-            background_color="#375662", # Set background to black for aesthetic
+            background_color="#273f43", # Set background to black for aesthetic
             wrap_width=20
         )
         if success:
@@ -234,7 +231,7 @@ def shortest_actor_connection():
     actor_name_1 = data_json.get("actor_name_1", "").strip()
     actor_name_2 = data_json.get("actor_name_2", "").strip()
 
-    shortest_path, error_message = graph_builder.find_shortest_actor_connection(actor_name_1, actor_name_2)
+    shortest_path, error_message = recommender.find_shortest_actor_connection(actor_name_1, actor_name_2)
     if shortest_path is not None:
         path_names, explanation = shortest_path, error_message
         return jsonify({"success": True, "path": path_names, "explanation": explanation})
@@ -337,7 +334,7 @@ def movie_connections_image():
             get_label_func=lambda n: movie_graph.nodes[n].get('title', str(n)),  # Map movie_id to title
             node_color="skyblue",
             edge_color="pink",
-            background_color="#375662",
+            background_color="#273f43",
             wrap_width=20
         )
         if success:

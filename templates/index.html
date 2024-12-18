@@ -6,6 +6,8 @@
     <meta name="description" content="Explore the Cinematic Galaxy Nexus to discover influential actors, movie recommendations, and visual connections between stars and films.">
     <meta name="keywords" content="movies, actors, cinematic galaxy, movie recommendations, star nexus">
     <title>Cinematic Galaxy Nexus</title>
+    <link rel="icon" href="/static/images/favicon.ico" type="image/x-icon">
+    <link rel="stylesheet" href="/static/css/style.css"> <!-- Link to the external CSS -->
     <style>
         body {
             font-family: Arial, sans-serif;
@@ -19,9 +21,12 @@
         }
 
         h1 {
-            color: #00e1ff;
+            font-size: 3rem; /* Adjust size */
+            color: #53eefa;
             text-align: center;
             margin-top: 20px;
+            text-shadow: 0 0 10px #53eefa, 0 0 20px #53eefa, 0 0 30px #53eefa, 0 0 40px #53eefa, 0 0 50px #53eefa;
+            animation: twinkle0 1.5s infinite alternate;
         }
         .section {
             margin: 30px auto;
@@ -88,6 +93,23 @@
             font-weight: bold;
             display: inline-block;
             animation: twinkle 1.5s infinite alternate; /* Twinkling animation */
+        }
+        /* Animation for twinkle effect */
+        @keyframes twinkle0 {
+            0% {
+                text-shadow: 
+                    0 0 5px #ff00ae, 
+                    0 0 10px #ff8bda, 
+                    0 0 20px #ff00aa, 
+                    0 0 30px #ffffe0;
+            }
+            100% {
+                text-shadow: 
+                    0 0 8px #ff00ae, 
+                    0 0 15px #ff8bda, 
+                    0 0 25px #ff00aa, 
+                    0 0 40px #ffffe0;
+            }
         }
 
         /* Animation for twinkle effect */
@@ -187,6 +209,13 @@
                 font-size: 14px;
             }
         }
+        
+        .placeholder-text {
+            color: #ccc; /* Placeholder-like color */
+            font-style: italic; /* Make it look like a placeholder */
+            user-select: none; /* Prevent text selection */
+            pointer-events: none; /* Disable interaction (e.g., clicks) */
+        }
 
 
 
@@ -195,6 +224,9 @@
 </head>
 <body>
     <h1>Cinematic Galaxy Nexus</h1>
+
+    <!-- Go to Top Button -->
+    <button id="go-to-top-btn" title="Go to Top">↑</button>
 
     <!-- Music Toggle Button -->
     <div id="music-toggle-btn" class="on" aria-label="Toggle background music"></div>
@@ -222,7 +254,7 @@
             <option value="actor">Actor</option>
             <option value="genre">Genre</option>
         </select>
-        <input type="text" id="search-query" placeholder="Enter search query" />
+        <input type="text" id="search-query" placeholder="Enter Search Query" />
         <label for="sort-option">Sort By:</label>
         <select id="sort-option">
             <option value="release time">Release Time</option>
@@ -235,49 +267,96 @@
             <option value="ascending">Ascending</option>
             <option value="descending">Descending</option>
         </select>
-        <button onclick="searchMovies()">Search Movies</button>
         <div id="search-results" class="results"></div>
     </div>
 
     <!-- 2. Brightest Star - Most Influential Actor Across Years -->
     <div class="section">
         <h2>Brightest Star - Most Influential Actor Across Years</h2>
-        <input type="number" id="start_year" placeholder="Start" min="2015" max="2024" />
-        <input type="number" id="end_year" placeholder="End" min="2015" max="2024" />
+        <input type="number" id="start_year" placeholder="Enter Start Year (Choose a Year from 2015 to 2024)" min="2015" max="2024" />
+        <input type="number" id="end_year" placeholder="Enter End Year (Choose a Year from 2015 to 2024)" min="2015" max="2024" />
         <button onclick="findInfluentialActors()">Find Most Influential Actor</button>
-        <div id="influential-results" class="results"></div>
+        <div id="influential-results" class="results">
+            <p class="placeholder-text">
+                Return the name of the most influential actor within a selected year range according to their participation in movies and the popularity of those movies.
+            </p>
+        </div>
     </div>
+    
 
     <!-- 3. Star Nexus - Actors Recommendation -->
     <div class="section">
         <h2>Star Nexus - Actors Recommendation</h2>
-        <input type="text" id="actor_name_connections" placeholder="Actor Name" />
-        <button onclick="getActorConnections()">Recommend Actors (top10)</button>
-        <button onclick="getActorConnectionsImage()">Visualize Connections</button>
+        <input type="text" id="actor_name_connections" placeholder="Enter Actor Name" />
+        <button onclick="getActorConnections()">Recommend Actors (Top 10)</button>
+        <button onclick="getActorConnectionsImage()">Visualize Actors' Connection</button>
         <div id="connections-results" class="results"></div>
+            <p class="placeholder-text">
+                Ranked in descending order based on their relevance (from highest to lowest).
+            </p>
         <div id="connections-image-results" class="results"></div>
+            <p class="placeholder-text">
+                The graph shows the input actor in the center, with top 10 most relevant actors radiating outward.
+                Numbers on edge indicates degree centrality weighted by popularity. Node size represents relevance.
+            </p>
     </div>
 
     <!-- 4. Star Trek - Shortest Actors Connection -->
     <div class="section">
-        <h2>Star Trek - Shortest Actors Connection</h2>
-        <input type="text" id="actor_name_1" placeholder="Actor Name 1" />
-        <input type="text" id="actor_name_2" placeholder="Actor Name 2" />
-        <button onclick="findShortestActorConnection()">Find Shortest Connection</button>
-        <div id="shortest-actor-connection-results" class="results"></div>
+        <h2>Star Trek - Shortest Actors Connection Path</h2>
+        <input type="text" id="actor_name_1" placeholder="Enter Actor Name 1 (e.g., Scarlett Johansson)" />
+        <input type="text" id="actor_name_2" placeholder="Enter Actor Name 2 (e.g., Jessica Chastain)" />
+        <button onclick="findShortestActorConnection()">Find Shortest Connection Path</button>
+        <div id="shortest-actor-connection-results" class="results">
+            <p class="placeholder-text">
+                <strong>Output Example:</strong> <br><br>
+                <strong>Starry Connection:</strong> <br>
+                Scarlett Johansson → Ashley Johnson → Jessica Chastain <br><br>
+                <strong>Cosmic Voyage:</strong> <br>
+                Scarlett Johansson and Ashley Johnson both act in movies: The Avengers <br><br>
+                Ashley Johnson and Jessica Chastain both act in movies: The Help.
+            </p>
+        </div>
     </div>
+
 
     <!-- 5. Galaxy Nexus - Movies Recommendation -->
     <div class="section">
         <h2>Galaxy Nexus - Movies Recommendation</h2>
-        <input type="text" id="movie_name_connections" placeholder="Movie Name" />
-        <button onclick="getMovieConnections()">Recommend Movies (top10)</button>
-        <button onclick="getMovieConnectionsImage()">Visualize Connections</button>
+        <input type="text" id="movie_name_connections" placeholder="Enter Movie Name" />
+        <button onclick="getMovieConnections()">Recommend Movies (Top 10)</button>
+        <button onclick="getMovieConnectionsImage()">Visualize Movies' Connection</button>
         <div id="connections-movie-results" class="results"></div>
+            <p class="placeholder-text">
+                Ranked in descending order based on their similarity (from highest to lowest)
+            </p>
         <div id="connections-movie-image-results" class="results"></div>
+            <p class="placeholder-text">
+                The graph shows the input movie in the center, with their top 10 most similar movies radiating outward.
+                Numbers on edge indicate Jaccard Index based on genres and actors. Node size represents degree of similarity.
+            </p>
     </div>
 
     <script>
+        // Add JavaScript for "Go to Top" button functionality
+        const goToTopBtn = document.getElementById("go-to-top-btn");
+
+        // Show the button when the user scrolls down
+        window.addEventListener("scroll", () => {
+            if (window.scrollY > 300) {
+                goToTopBtn.style.display = "block";
+            } else {
+                goToTopBtn.style.display = "none";
+            }
+        });
+
+        // Scroll to the top when the button is clicked
+        goToTopBtn.addEventListener("click", () => {
+            window.scrollTo({
+                top: 0,
+                behavior: "smooth"
+            });
+        });
 
         const music = document.getElementById("background-music");
         const musicToggleBtn = document.getElementById("music-toggle-btn");
@@ -443,24 +522,22 @@
         async function getActorConnectionsImage() {
             const actorName = document.getElementById("actor_name_connections").value; 
             const resultsDiv = document.getElementById("connections-image-results");
-            resultsDiv.innerHTML = ""; // Clear previous results
+            resultsDiv.innerHTML = "";
 
             const data = await postData("/actor_connections_image", { actor_name: actorName });
 
             if (data.success) {
                 const img = document.createElement("img");
                 img.src = data.image_url;
-
-                // Ensure the image is styled properly
                 img.style.maxWidth = "100%";
                 img.style.height = "auto";
-                img.style.display = "block"; // Prevent inline layout issues
-
+                img.style.display = "block";
                 resultsDiv.appendChild(img);
             } else {
                 resultsDiv.innerHTML = `<p>${data.message}</p>`;
             }
         }
+
 
         async function findShortestActorConnection() {
             const actorName1 = document.getElementById("actor_name_1").value;
@@ -547,7 +624,6 @@
                 resultsDiv.innerHTML = `<p>${data.message}</p>`; // Display error message
             }
         }
-
 
         async function getMovieConnections() {
             const movieName = document.getElementById("movie_name_connections").value;
