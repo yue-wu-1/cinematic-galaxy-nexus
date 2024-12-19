@@ -270,9 +270,9 @@
         <div id="search-results" class="results"></div>
     </div>
 
-    <!-- 2. Brightest Star - Most Influential Actor Across Years -->
+    <!-- 2. Brightest Star - The Most Influential Actor Across Years -->
     <div class="section">
-        <h2>Brightest Star - Most Influential Actor Across Years</h2>
+        <h2>Brightest Star - The Most Influential Actor Across Years</h2>
         <input type="number" id="start_year" placeholder="Enter Start Year (Choose a Year from 2015 to 2024)" min="2015" max="2024" />
         <input type="number" id="end_year" placeholder="Enter End Year (Choose a Year from 2015 to 2024)" min="2015" max="2024" />
         <button onclick="findInfluentialActors()">Find Most Influential Actor</button>
@@ -310,9 +310,9 @@
         <div id="shortest-actor-connection-results" class="results">
             <p class="placeholder-text">
                 <strong>Output Example:</strong> <br><br>
-                <strong>Starry Connection:</strong> <br>
+                <strong>Starry Connection:</strong> <br><br>
                 Scarlett Johansson → Ashley Johnson → Jessica Chastain <br><br>
-                <strong>Cosmic Voyage:</strong> <br>
+                <strong>Cosmic Voyage:</strong> <br><br>
                 Scarlett Johansson and Ashley Johnson both act in movies: The Avengers <br><br>
                 Ashley Johnson and Jessica Chastain both act in movies: The Help.
             </p>
@@ -442,7 +442,7 @@
             if (data.success) {
                 // Create a paragraph element to hold the result
                 const p = document.createElement("p");
-                p.textContent = `Most Influential Actor ${periodText}: `;
+                p.textContent = `The Most Influential Actor ${periodText}: `;
 
                 // Create a clickable span for the actor name
                 const actorSpan = document.createElement("span");
