@@ -1,4 +1,5 @@
 ### Cinematic Galaxy Nexus - A Movie Search and Recommendation System
+Demo.video [Google doc link: https://drive.google.com/file/d/1VTGARQuzOcoQVUXma9YA7MZSjREZu_dR/view?usp=drive_link]
 
 ## Overview
 Cinematic Galaxy Nexus is an interactive movie search and recommendation system that uses a graph-based approach to explore relationships between movies and actors. This web-based tool allows users to:
