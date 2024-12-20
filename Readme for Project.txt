@@ -1,3 +1,8 @@
+------------------------------------------2020-12-19-----------------------------------------
+IMMPORTANT UPDATE: I deployed this project on pythonanywhere, so you can access the website directly by this url:
+Yue165.pythonanywhere.com
+
+------------------------------------------2020-12-18-----------------------------------------
 ### Cinematic Galaxy Nexus - A Movie Search and Recommendation System
 Demo.video [Google doc link: https://drive.google.com/file/d/1VTGARQuzOcoQVUXma9YA7MZSjREZu_dR/view?usp=drive_link]
 
