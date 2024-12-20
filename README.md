@@ -1,10 +1,11 @@
-############# 2020-12-19
+############# 2024-12-19
 
-##IMMPORTANT UPDATE: I deployed this project on PythonAnywhere, so you can access the website directly by this URL:
-
+##IMMPORTANT UPDATE: 
+1. Deployed this project on PythonAnywhere, so users can access the website directly by this URL:
 [Yue165's PythonAnywhere Website](https://Yue165.pythonanywhere.com)
+2.Expand the movie data range to 1950 - 2024
 
-############# 2020-12-18
+############# 2024-12-18
 ### Cinematic Galaxy Nexus - A Movie Search and Recommendation System
 Demo.video [Google doc link: https://drive.google.com/file/d/1VTGARQuzOcoQVUXma9YA7MZSjREZu_dR/view?usp=drive_link]
 
