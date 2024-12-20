@@ -1,5 +1,5 @@
 ------------------------------------------2020-12-19-----------------------------------------
-IMMPORTANT UPDATE: I deployed this project on pythonanywhere, so you can access the website directly by this url:
+IMMPORTANT UPDATE: I deployed this project on pythonanywhere, so you can access the website directly by this URL:
 Yue165.pythonanywhere.com
 
 ------------------------------------------2020-12-18-----------------------------------------
