@@ -138,6 +138,33 @@
             z-index: 1000; /* Ensures it stays above all content */
             animation: moveAroundEdges 20s linear infinite;
         }
+         /* explanation styling */
+        .explanation {
+            position: fixed;
+            top: 10px;
+            right: 10px;
+            width: 300px;
+            background: rgba(0, 0, 0, 0.8);
+            color: white;
+            padding: 15px;
+            border-radius: 8px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+            font-size: 14px;
+            z-index: 1000; /* Ensure it stays on top */
+        }
+
+        .explanation h2 {
+            margin-top: 0;
+            font-size: 16px;
+            color: #53eefa;
+            text-shadow: 0 0 5px #53eefa;
+        }
+
+        .explanation p {
+            margin: 0;
+            line-height: 1.5;
+            font-size: 14px;
+        }        
 
         /* Animation for moving the spaceship around the edges */
         @keyframes moveAroundEdges {
@@ -225,6 +252,18 @@
 <body>
     <h1>Cinematic Galaxy Nexus</h1>
 
+    <div style="max-width: 1000px; margin: 10px auto; padding: 10px; background: rgba(0, 0, 0, 0.7); border-radius: 8px;">
+        <p style="font-size: 1rem; color: white; text-align: center;">
+            <span style="color: skyblue; font-weight: bold;">Cinematic Galaxy Nexus</span> is an interactive movie search and recommendation system that uses a graph-based approach to explore relationships between movies and actors. This web-based tool allows users to:
+        </p>
+        <ul style="list-style-type: none; padding: 0; margin: 10px 0; color: white; font-size: 1rem; line-height: 1.8;">
+            <li><span style="color: pink; font-weight: bold;">Search Movies:</span> Look up movies by title, genre, or actor.</li>
+            <li><span style="color: pink; font-weight: bold;">Explore Influential Actors:</span> Identify the most influential actors in a specific year range.</li>
+            <li><span style="color: pink; font-weight: bold;">Discover Actor Connections:</span> Find the shortest connection path between any two actors through co-starring movies.</li>
+            <li><span style="color: pink; font-weight: bold;">Get Recommendations:</span> View movie and actor recommendations with interactive connection graphs.</li>
+        </ul>
+    </div>
+
     <!-- Go to Top Button -->
     <button id="go-to-top-btn" title="Go to Top">↑</button>
 
@@ -270,11 +309,11 @@
         <div id="search-results" class="results"></div>
     </div>
 
-    <!-- 2. Brightest Star - Most Influential Actor Across Years -->
+    <!-- 2. Brightest Star - The Most Influential Actor Across Years -->
     <div class="section">
-        <h2>Brightest Star - Most Influential Actor Across Years</h2>
-        <input type="number" id="start_year" placeholder="Enter Start Year (Choose a Year from 2015 to 2024)" min="2015" max="2024" />
-        <input type="number" id="end_year" placeholder="Enter End Year (Choose a Year from 2015 to 2024)" min="2015" max="2024" />
+        <h2>Brightest Star - The Most Influential Actor Across Years</h2>
+        <input type="number" id="start_year" placeholder="Enter Start Year (Choose a Year from 1950 to 2024)" min="1950" max="2024" />
+        <input type="number" id="end_year" placeholder="Enter End Year (Choose a Year from 1950 to 2024)" min="1950" max="2024" />
         <button onclick="findInfluentialActors()">Find Most Influential Actor</button>
         <div id="influential-results" class="results">
             <p class="placeholder-text">
@@ -310,9 +349,9 @@
         <div id="shortest-actor-connection-results" class="results">
             <p class="placeholder-text">
                 <strong>Output Example:</strong> <br><br>
-                <strong>Starry Connection:</strong> <br>
+                <strong>Starry Connection:</strong> <br><br>
                 Scarlett Johansson → Ashley Johnson → Jessica Chastain <br><br>
-                <strong>Cosmic Voyage:</strong> <br>
+                <strong>Cosmic Voyage:</strong> <br><br>
                 Scarlett Johansson and Ashley Johnson both act in movies: The Avengers <br><br>
                 Ashley Johnson and Jessica Chastain both act in movies: The Help.
             </p>
@@ -442,7 +481,7 @@
             if (data.success) {
                 // Create a paragraph element to hold the result
                 const p = document.createElement("p");
-                p.textContent = `Most Influential Actor ${periodText}: `;
+                p.textContent = `The Most Influential Actor ${periodText}: `;
 
                 // Create a clickable span for the actor name
                 const actorSpan = document.createElement("span");
