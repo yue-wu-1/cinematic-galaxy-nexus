@@ -2,7 +2,7 @@
 IMMPORTANT UPDATE: 
 1. Deployed this project on pythonanywhere, so users can access the website directly by this URL:
 Yue165.pythonanywhere.com
-2. Expanded the movie data search range to 1900 - 2024.
+2. Expanded the movie data search range to 1950 - 2024.
 
 ------------------------------------------2020-12-18-----------------------------------------
 ### Cinematic Galaxy Nexus - A Movie Search and Recommendation System
