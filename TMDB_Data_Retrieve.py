@@ -26,7 +26,7 @@ MOVIE_CREDITS_URL = "https://api.themoviedb.org/3/movie/{}/credits"
 # Parameters for searching movies
 DISCOVER_PARAMS = {
     "sort_by": "popularity.desc",
-    "release_date.gte": "2015-01-01",
+    "release_date.gte": "1950-01-01",
     "release_date.lte": "2024-12-31",
     "language": "en-US",
     "page": 1
@@ -37,7 +37,7 @@ def get_popular_movies():
     page = 1
     total_pages = 1  # Will be updated after first request
 
-    while page <= total_pages and page <= 50:  # Limit to first 50 pages
+    while page <= total_pages and page <= 500:  # Limit to first 50 pages
         DISCOVER_PARAMS['page'] = page
         response = requests.get(DISCOVER_URL, headers=HEADERS, params=DISCOVER_PARAMS)
         if response.status_code == 200:

@@ -30,7 +30,7 @@ Note: This system is built using Flask framework
 
 # Most Influential Actor
 1.Prompts:
-    User-input Number: "Enter Start Year" | "Enter End Year" (limited from 2015 to 2024)
+    User-input Number: "Enter Start Year" | "Enter End Year" (limited from 1950 to 2024)
 2.Output:
     The most influential actor in a given time period, based on page-rank weighted by popularity of movies.
 
