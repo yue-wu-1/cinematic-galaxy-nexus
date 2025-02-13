@@ -1,5 +1,4 @@
 ############# 2024-12-19
-ssss\assss
 ##IMMPORTANT UPDATE: 
 1. Deployed this project on PythonAnywhere, so users can access the website directly by this URL:
 [Yue165's PythonAnywhere Website](https://Yue165.pythonanywhere.com)
@@ -71,20 +70,20 @@ API keys (Optional): eyJhbGciOiJIUzI1NiJ9.eyJhdWQiOiI1Zjc2NjgzYzZiMzQ2MThlZTVjZT
 
 ## Directory Structure [do not change]
 
-movie_app/
-│
-├── _pychche_
-├── static/
-│   ├── css
-│   │   
-│   ├── images
-│   └── music
-├── templates
-│   
-├── run.py
-├── DataStructrue.py
-├── movies_actors.csv
-├── TMDB_Data_Retrieve.py
+movie_app/   
+│    
+├── _pychche_   
+├── static/  
+│   ├── css  
+│   │    
+│   ├── images   
+│   └── music  
+├── templates  
+│     
+├── run.py    
+├── DataStructrue.py  
+├── movies_actors.csv   
+├── TMDB_Data_Retrieve.py  
 
 
 
