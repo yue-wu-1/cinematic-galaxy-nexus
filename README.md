@@ -71,18 +71,18 @@ API keys (Optional): eyJhbGciOiJIUzI1NiJ9.eyJhdWQiOiI1Zjc2NjgzYzZiMzQ2MThlZTVjZT
 ## Directory Structure [do not change]
 
 movie_app/   
-│    
-├── _pychche_   
+│  
+├── _pychche_  
 ├── static/  
 │   ├── css  
-│   │    
-│   ├── images   
+│   │  
+│   ├── images  
 │   └── music  
 ├── templates  
-│     
-├── run.py    
+│  
+├── run.py  
 ├── DataStructrue.py  
-├── movies_actors.csv   
+├── movies_actors.csv  
 ├── TMDB_Data_Retrieve.py  
 
 
